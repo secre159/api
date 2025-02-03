@@ -143,6 +143,16 @@ async def check_account(username, password, proxy_manager):
 
     return {"status": "failed", "message": "Unknown error occurred"}
 
+# Fetch the current public IP address
+async def fetch_current_ip():
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.get('https://ifconfig.me')
+            if response.status_code == 200:
+                return response.text.strip()
+    except Exception as e:
+        return None
+
 # Flask Endpoints
 
 @app.route('/generate_api_key', methods=['POST'])
@@ -245,6 +255,13 @@ def remaining_checks_endpoint():
 
     remaining_checks = max_checks - used_checks
     return jsonify({"status": "success", "remaining_checks": remaining_checks})
+
+@app.route('/current_ip', methods=['GET'])
+async def current_ip():
+    ip = await fetch_current_ip()
+    if ip:
+        return jsonify({"status": "success", "ip": ip})
+    return jsonify({"status": "error", "message": "Could not fetch IP"}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)
