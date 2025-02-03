@@ -4,3 +4,4 @@ Flask-Limiter
 asyncio
 httpx
 datetime
+fake-useragent
