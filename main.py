@@ -43,17 +43,23 @@ class ProxyManager:
         return proxy_list
 
     def get_next_proxy(self):
-        """Return the next proxy in a round-robin manner"""
-        if len(self.proxies) == 0:
-            raise ValueError("No proxies available.")
-        
-        # Get the current proxy
-        proxy = self.proxies[self.current_proxy_index]
-        
-        # Move to the next proxy for the next request
-        self.current_proxy_index = (self.current_proxy_index + 1) % len(self.proxies)
-        
-        return proxy
+    """Return the next proxy in a round-robin manner with correct formatting"""
+    if not self.proxies:
+        raise ValueError("No proxies available.")
+
+    # Get current proxy (raw ip:port)
+    raw_proxy = self.proxies[self.current_proxy_index]
+    
+    # Ensure proxy has a correct scheme (http or https)
+    if raw_proxy.startswith("http://") or raw_proxy.startswith("https://"):
+        proxy = raw_proxy
+    else:
+        proxy = f"http://{raw_proxy}"  # Default to HTTP
+
+    # Rotate to next proxy
+    self.current_proxy_index = (self.current_proxy_index + 1) % len(self.proxies)
+    
+    return proxy
 
 # Load proxies
 proxy_manager = ProxyManager()
