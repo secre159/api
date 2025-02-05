@@ -12,8 +12,8 @@ from datetime import datetime, timedelta
 app = Flask(__name__)
 
 # Global Variables
-API_KEY = "your_secure_api_key_here"  # Default admin key
-admin_password = "Al159875325"  # Super password to authenticate admin
+API_KEY = "159875325"  # Default admin key
+admin_password = "Axl159875325"  # Super password to authenticate admin
 api_keys = {}  # Dictionary to store API keys and associated user names
 check_limits = {}  # Store daily check limits for each API key
 MAX_DAILY_CHECKS = 50000  # Max checks per day
@@ -263,5 +263,12 @@ async def current_ip():
         return jsonify({"status": "success", "ip": ip})
     return jsonify({"status": "error", "message": "Could not fetch IP"}), 500
 
+@app.route('/list_proxies', methods=['GET'])
+def list_proxies():
+    try:
+        return jsonify({"status": "success", "proxies": proxy_manager.proxies})
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)})
+        
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
